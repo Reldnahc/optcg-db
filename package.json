@@ -1,0 +1,32 @@
+{
+  "name": "optcg-db",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Shared database layer (schema, migrations, connection pool) for the OPTCG Scryfall project",
+  "exports": {
+    "./db/client.js": "./dist/db/client.js",
+    "./db/schema.js": "./dist/db/schema.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "migrate": "tsx src/db/migrate.ts",
+    "prepublishOnly": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/pg": "^8.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
