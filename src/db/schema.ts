@@ -158,6 +158,8 @@ export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
   "": "Standard",
   "(Alternate Art)": "Alternate Art",
   "(SP)": "SP Card",
+  "(SP) (Gold)": "SP Card",
+  "(Wanted Poster)": "SP Card",
   "(Manga)": "Manga Art",
   "(Gold)": "Gold",
   "(Dash Pack)": "Dash Pack",
@@ -167,3 +169,6 @@ export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
   "(Reprint)": "Reprint",
   "(Parallel)": "Alternate Art",
 };
+
+/** Suffixes that indicate the gold variant of an SP Card */
+export const TCGPLAYER_GOLD_SP_SUFFIXES = new Set(["(SP) (Gold)"]);

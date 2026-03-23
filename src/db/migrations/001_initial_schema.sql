@@ -54,7 +54,7 @@ CREATE TABLE card_images (
   card_id       UUID REFERENCES cards(id) NOT NULL,
   product_id    UUID REFERENCES products(id), -- which product this image was scraped from
   variant_index INT NOT NULL DEFAULT 0,      -- 0 = standard, 1+ = alt arts
-  image_url     TEXT NOT NULL,               -- S3/CloudFront URL
+  image_url     TEXT,                        -- S3/CloudFront URL, NULL for placeholder entries
   source_url    TEXT,                        -- original Bandai URL, used for deduplication
   is_default    BOOLEAN NOT NULL DEFAULT false,
   label         TEXT,                        -- e.g. "Alternate Art", "Manga Art" — NULL until classified
