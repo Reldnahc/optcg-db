@@ -13,6 +13,7 @@ CREATE TABLE products (
   language    TEXT NOT NULL,                 -- scraped product language
   name        TEXT NOT NULL,                 -- product title from "Card Set(s)" field
   tcgplayer_group_id INT,                    -- TCGPlayer's groupId for this product
+  source      TEXT NOT NULL DEFAULT 'bandai',  -- 'bandai' or 'tcgplayer'
   released_at DATE,                          -- official release date if known
   created_at  TIMESTAMPTZ DEFAULT now(),
   UNIQUE (name, language)

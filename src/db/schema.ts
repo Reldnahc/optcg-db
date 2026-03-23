@@ -7,6 +7,7 @@ export interface Product {
   id: string;
   language: Language;
   name: string;
+  source: string;
   tcgplayer_group_id: number | null;
   released_at: string | null;
   created_at: string;
