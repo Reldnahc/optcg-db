@@ -57,6 +57,7 @@ CREATE TABLE card_images (
   product_id    UUID REFERENCES products(id), -- which product this image was scraped from
   variant_index INT NOT NULL DEFAULT 0,      -- 0 = standard, 1+ = alt arts
   image_url     TEXT,                        -- S3/CloudFront URL, NULL for placeholder entries
+  scan_url      TEXT,                        -- community-contributed scan URL (S3)
   source_url    TEXT,                        -- original Bandai URL, used for deduplication
   is_default    BOOLEAN NOT NULL DEFAULT false,
   label         TEXT,                        -- e.g. "Alternate Art", "Manga Art" — NULL until classified
@@ -92,6 +93,10 @@ CREATE TABLE formats (
   created_at  TIMESTAMPTZ DEFAULT now()
 );
 
+INSERT INTO formats (name, has_rotation) VALUES
+  ('Standard', true),
+  ('Extra Regulation', false);
+
 CREATE TABLE format_legal_blocks (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   format_id   UUID REFERENCES formats(id) NOT NULL,
@@ -102,13 +107,15 @@ CREATE TABLE format_legal_blocks (
 );
 
 CREATE TABLE format_bans (
-  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  format_id   UUID REFERENCES formats(id) NOT NULL,
-  card_number TEXT NOT NULL,
-  banned_at   DATE NOT NULL,
-  reason      TEXT,
-  unbanned_at DATE,                          -- NULL if still banned
-  UNIQUE (format_id, card_number)
+  id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  format_id          UUID REFERENCES formats(id) NOT NULL,
+  card_number        TEXT NOT NULL,
+  ban_type           TEXT NOT NULL DEFAULT 'banned',  -- 'banned', 'restricted', 'pair'
+  max_copies         INT,                              -- for restricted: max allowed copies (e.g. 1)
+  paired_card_number TEXT,                             -- for pair bans: the other card
+  banned_at          DATE NOT NULL,
+  reason             TEXT,
+  unbanned_at        DATE,                             -- NULL if still active
 );
 
 CREATE TABLE tcgplayer_products (
@@ -142,6 +149,17 @@ CREATE TABLE tcgplayer_prices (
   fetched_at            TIMESTAMPTZ DEFAULT now()
 );
 
+CREATE TABLE watched_topics (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  language   TEXT NOT NULL,
+  url        TEXT NOT NULL,
+  title      TEXT NOT NULL,
+  published  DATE,
+  seen_at    TIMESTAMPTZ DEFAULT now(),
+  scraped    BOOLEAN NOT NULL DEFAULT false,
+  UNIQUE (language, url)
+);
+
 CREATE TABLE scrape_log (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ran_at        TIMESTAMPTZ DEFAULT now(),
@@ -173,6 +191,7 @@ CREATE INDEX idx_don_cards_character ON don_cards(character);
 CREATE INDEX idx_format_legal_blocks_format_id ON format_legal_blocks(format_id);
 CREATE INDEX idx_format_bans_format_id ON format_bans(format_id);
 CREATE INDEX idx_format_bans_card_number ON format_bans(card_number);
+CREATE UNIQUE INDEX idx_format_bans_unique ON format_bans(format_id, card_number, COALESCE(paired_card_number, ''));
 CREATE INDEX idx_tcgplayer_products_ext_number ON tcgplayer_products(ext_number);
 CREATE INDEX idx_tcgplayer_products_card_image_id ON tcgplayer_products(card_image_id);
 CREATE INDEX idx_tcgplayer_products_don_card_id ON tcgplayer_products(don_card_id);

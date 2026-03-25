@@ -8,6 +8,8 @@ import pg from "pg";
 import { logger } from "../shared/logger.js";
 
 const { Pool } = pg;
+const SLOW_QUERY_MS = 250;
+const SQL_PREVIEW_LENGTH = 180;
 
 let pool: pg.Pool | null = null;
 
@@ -52,7 +54,7 @@ export function getPool(config?: DbConfig): pg.Pool {
       database: c.database,
       ssl: c.ssl ? { rejectUnauthorized: false } : false,
       max: 10,
-      idleTimeoutMillis: 30000,
+      idleTimeoutMillis: 600000,
       connectionTimeoutMillis: 5000,
     });
 
@@ -68,7 +70,16 @@ export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(
   params?: unknown[]
 ): Promise<pg.QueryResult<T>> {
   const p = getPool();
-  return p.query<T>(text, params);
+  const startedAt = process.hrtime.bigint();
+
+  try {
+    const result = await p.query<T>(text, params);
+    logQueryTiming(text, params, result.rowCount, startedAt);
+    return result;
+  } catch (error) {
+    logQueryTiming(text, params, null, startedAt, error);
+    throw error;
+  }
 }
 
 export async function closePool(): Promise<void> {
@@ -77,4 +88,34 @@ export async function closePool(): Promise<void> {
     pool = null;
     logger.info("Database pool closed");
   }
+}
+
+function logQueryTiming(
+  text: string,
+  params: unknown[] | undefined,
+  rowCount: number | null,
+  startedAt: bigint,
+  error?: unknown,
+) {
+  const durationMs = Number(process.hrtime.bigint() - startedAt) / 1_000_000;
+  const payload = {
+    duration_ms: Number(durationMs.toFixed(1)),
+    row_count: rowCount,
+    param_count: params?.length ?? 0,
+    sql: summarizeSql(text),
+    ...(error instanceof Error ? { error: error.message } : {}),
+  };
+
+  if (error || durationMs >= SLOW_QUERY_MS) {
+    logger.warn("Slow database query", payload);
+    return;
+  }
+
+  logger.debug("Database query timing", payload);
+}
+
+function summarizeSql(text: string): string {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  if (normalized.length <= SQL_PREVIEW_LENGTH) return normalized;
+  return normalized.slice(0, SQL_PREVIEW_LENGTH - 3) + "...";
 }

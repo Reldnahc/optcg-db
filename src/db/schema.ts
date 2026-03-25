@@ -178,9 +178,9 @@ export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
   "(Parallel)": "Alternate Art",
   "(Super Alternate Art)": "Alternate Art",
   "(Red Super Alternate Art)": "Alternate Art",
-  "(Textured Foil)": "Alternate Art",
-  "(Pirate Foil)": "Alternate Art",
-  "(Jolly Roger Foil)": "Alternate Art",
+  "(Textured Foil)": "Textured Foil",
+  "(Pirate Foil)": "Jolly Roger Foil",
+  "(Jolly Roger Foil)": "Jolly Roger Foil",
   "(TR)": "Alternate Art",
 };
 
