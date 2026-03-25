@@ -93,10 +93,6 @@ CREATE TABLE formats (
   created_at  TIMESTAMPTZ DEFAULT now()
 );
 
-INSERT INTO formats (name, has_rotation) VALUES
-  ('Standard', true),
-  ('Extra Regulation', false);
-
 CREATE TABLE format_legal_blocks (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   format_id   UUID REFERENCES formats(id) NOT NULL,
@@ -115,7 +111,7 @@ CREATE TABLE format_bans (
   paired_card_number TEXT,                             -- for pair bans: the other card
   banned_at          DATE NOT NULL,
   reason             TEXT,
-  unbanned_at        DATE,                             -- NULL if still active
+  unbanned_at        DATE                              -- NULL if still active
 );
 
 CREATE TABLE tcgplayer_products (
