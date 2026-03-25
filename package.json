@@ -13,6 +13,7 @@
   "scripts": {
     "build": "tsc",
     "migrate": "tsx src/db/migrate.ts",
+    "restore": "tsx src/db/restore.ts",
     "prepublishOnly": "tsc",
     "typecheck": "tsc --noEmit"
   },
