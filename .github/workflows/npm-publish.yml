@@ -1,0 +1,73 @@
+name: Publish NPM Package
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "src/**"
+      - "tsconfig.json"
+      - ".github/workflows/npm-publish.yml"
+
+permissions:
+  contents: write
+  id-token: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Bump patch version
+        id: version-bump
+        run: |
+          OLD_VERSION=$(node -p "require('./package.json').version")
+          npm version patch --no-git-tag-version
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          echo "name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
+          echo "old_version=$OLD_VERSION" >> "$GITHUB_OUTPUT"
+          echo "version=$PACKAGE_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Bumped $PACKAGE_NAME from $OLD_VERSION to $PACKAGE_VERSION" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish package
+        run: npm publish --provenance --access public
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "chore: bump optcg-db to v${{ steps.version-bump.outputs.version }} [skip ci]"
+          git tag "v${{ steps.version-bump.outputs.version }}"
+          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin "v${{ steps.version-bump.outputs.version }}"
+
+      - name: Summarize published version
+        run: |
+          echo "Published ${{ steps.version-bump.outputs.name }}@${{ steps.version-bump.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
