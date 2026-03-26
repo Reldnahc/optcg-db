@@ -3,6 +3,14 @@
   "version": "0.4.1",
   "type": "module",
   "description": "Shared database layer (schema, migrations, connection pool) for the OPTCG Scryfall project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Reldnahc/optcg-db"
+  },
+  "homepage": "https://github.com/Reldnahc/optcg-db",
+  "bugs": {
+    "url": "https://github.com/Reldnahc/optcg-db/issues"
+  },
   "exports": {
     "./db/client.js": "./dist/db/client.js",
     "./db/schema.js": "./dist/db/schema.js"
