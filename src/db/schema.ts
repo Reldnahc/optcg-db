@@ -46,6 +46,8 @@ export interface CardImage {
   variant_index: number;
   image_url: string;
   source_url: string | null;
+  artist: string | null;
+  artist_ocr: boolean;
   is_default: boolean;
   label: string | null;
   classified: boolean;
@@ -141,7 +143,7 @@ export type Language = "en" | "ja" | "fr" | "zh";
 export type CardType = "Leader" | "Character" | "Event" | "Stage";
 
 /** Rarity codes */
-export type Rarity = "C" | "UC" | "R" | "SR" | "SEC" | "L" | "P" | "SP";
+export type Rarity = "C" | "UC" | "R" | "SR" | "SEC" | "L" | "P" | "SP" | "TR";
 
 /** Color values */
 export type Color = "Red" | "Green" | "Blue" | "Purple" | "Black" | "Yellow";
@@ -159,11 +161,11 @@ export type ProductType = "card" | "sealed" | "don";
 export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
   "": "Standard",
   "(Alternate Art)": "Alternate Art",
-  "(SP)": "SP Card",
-  "(SP) (Gold)": "SP Card",
-  "(SP) (Silver)": "SP Card",
-  "(SP) (Wanted Poster)": "SP Card",
-  "(Wanted Poster)": "SP Card",
+  "(SP)": "SP",
+  "(SP) (Gold)": "SP",
+  "(SP) (Silver)": "SP",
+  "(SP) (Wanted Poster)": "SP",
+  "(Wanted Poster)": "SP",
   "(Manga)": "Manga Art",
   "(Parallel) (Manga)": "Manga Art",
   "(Alternate Art) (Manga)": "Manga Art",
@@ -181,8 +183,8 @@ export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
   "(Textured Foil)": "Textured Foil",
   "(Pirate Foil)": "Jolly Roger Foil",
   "(Jolly Roger Foil)": "Jolly Roger Foil",
-  "(TR)": "Alternate Art",
+  "(TR)": "TR",
 };
 
-/** Suffixes that indicate the gold variant of an SP Card */
+/** Suffixes that indicate the gold variant of an SP label */
 export const TCGPLAYER_GOLD_SP_SUFFIXES = new Set(["(SP) (Gold)"]);

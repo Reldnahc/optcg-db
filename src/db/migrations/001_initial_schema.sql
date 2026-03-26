@@ -59,6 +59,8 @@ CREATE TABLE card_images (
   image_url     TEXT,                        -- S3/CloudFront URL, NULL for placeholder entries
   scan_url      TEXT,                        -- community-contributed scan URL (S3)
   source_url    TEXT,                        -- original Bandai URL, used for deduplication
+  artist        TEXT,                        -- variant-level artist / illustrator
+  artist_ocr    BOOLEAN NOT NULL DEFAULT false, -- true once OCR has been attempted for this variant
   is_default    BOOLEAN NOT NULL DEFAULT false,
   label         TEXT,                        -- e.g. "Alternate Art", "Manga Art" — NULL until classified
   classified    BOOLEAN NOT NULL DEFAULT false,
