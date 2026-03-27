@@ -61,6 +61,15 @@ CREATE TABLE card_images (
   source_url    TEXT,                        -- original Bandai URL, used for deduplication
   artist        TEXT,                        -- variant-level artist / illustrator
   artist_ocr    BOOLEAN NOT NULL DEFAULT false, -- true once OCR has been attempted for this variant
+  artist_source TEXT CHECK (artist_source IS NULL OR artist_source IN ('manual', 'scrape', 'ocr')),
+  artist_ocr_status TEXT NOT NULL DEFAULT 'pending'
+                CHECK (artist_ocr_status IN ('pending', 'processing', 'succeeded', 'failed', 'needs_review', 'skipped')),
+  artist_ocr_candidate TEXT,
+  artist_ocr_confidence TEXT,
+  artist_ocr_attempts INT NOT NULL DEFAULT 0,
+  artist_ocr_last_error TEXT,
+  artist_ocr_last_run_at TIMESTAMPTZ,
+  artist_ocr_source_url TEXT,
   is_default    BOOLEAN NOT NULL DEFAULT false,
   label         TEXT,                        -- e.g. "Alternate Art", "Manga Art" — NULL until classified
   classified    BOOLEAN NOT NULL DEFAULT false,
@@ -182,6 +191,7 @@ CREATE INDEX idx_cards_language ON cards(language);
 CREATE INDEX idx_cards_color ON cards USING GIN(color);
 CREATE INDEX idx_cards_types ON cards USING GIN(types);
 CREATE INDEX idx_card_images_card_id ON card_images(card_id);
+CREATE INDEX idx_card_images_artist_ocr_status ON card_images(artist_ocr_status);
 CREATE INDEX idx_card_sources_card_id ON card_sources(card_id);
 CREATE INDEX idx_card_sources_product_id ON card_sources(product_id);
 CREATE INDEX idx_don_cards_product_id ON don_cards(product_id);

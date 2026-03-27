@@ -44,10 +44,19 @@ export interface CardImage {
   card_id: string;
   product_id: string | null;
   variant_index: number;
-  image_url: string;
+  image_url: string | null;
+  scan_url: string | null;
   source_url: string | null;
   artist: string | null;
   artist_ocr: boolean;
+  artist_source: ArtistSource | null;
+  artist_ocr_status: ArtistOcrStatus;
+  artist_ocr_candidate: string | null;
+  artist_ocr_confidence: string | null;
+  artist_ocr_attempts: number;
+  artist_ocr_last_error: string | null;
+  artist_ocr_last_run_at: string | null;
+  artist_ocr_source_url: string | null;
   is_default: boolean;
   label: string | null;
   classified: boolean;
@@ -156,6 +165,18 @@ export type DonFinish = "Normal" | "Foil" | "Gold";
 
 /** TCGPlayer product types */
 export type ProductType = "card" | "sealed" | "don";
+
+/** Source of the canonical variant artist value */
+export type ArtistSource = "manual" | "scrape" | "ocr";
+
+/** OCR workflow state for a card image variant */
+export type ArtistOcrStatus =
+  | "pending"
+  | "processing"
+  | "succeeded"
+  | "failed"
+  | "needs_review"
+  | "skipped";
 
 /** Label mapping from TCGPlayer suffix to card_images label */
 export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
