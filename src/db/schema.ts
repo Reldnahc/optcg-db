@@ -145,6 +145,70 @@ export interface ScrapeLog {
   duration_ms: number | null;
 }
 
+export interface ScanIngestBatch {
+  id: string;
+  language: Language;
+  label: string | null;
+  source: string;
+  status: ScanIngestBatchStatus;
+  raw_prefix: string;
+  processed_prefix: string;
+  total_files: number;
+  total_items: number;
+  processed_at: string | null;
+  last_error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ScanIngestFile {
+  id: string;
+  batch_id: string;
+  file_name: string;
+  s3_key: string;
+  public_url: string;
+  content_type: string | null;
+  status: ScanIngestFileStatus;
+  detected_cards: number | null;
+  processed_at: string | null;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ScanIngestItem {
+  id: string;
+  batch_id: string;
+  file_id: string;
+  ordinal: number;
+  status: ScanIngestItemStatus;
+  raw_card_number: string | null;
+  raw_artist: string | null;
+  card_number: string | null;
+  artist: string | null;
+  artist_present: boolean;
+  artist_confidence: string | null;
+  card_number_confidence: string | null;
+  fuzzy_artist: string | null;
+  fuzzy_artist_score: string | null;
+  fuzzy_artist_matched: boolean;
+  suggested_filename: string | null;
+  filename_slug: string | null;
+  duplicate_index: number;
+  processed_s3_key: string | null;
+  processed_url: string | null;
+  artist_crop_s3_key: string | null;
+  artist_crop_url: string | null;
+  footer_crop_s3_key: string | null;
+  footer_crop_url: string | null;
+  linked_card_id: string | null;
+  linked_card_image_id: string | null;
+  review_notes: string | null;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 /** Supported languages */
 export type Language = "en" | "ja" | "fr" | "zh";
 
@@ -177,6 +241,26 @@ export type ArtistOcrStatus =
   | "failed"
   | "needs_review"
   | "skipped";
+
+export type ScanIngestBatchStatus =
+  | "uploaded"
+  | "processing"
+  | "processed"
+  | "needs_review"
+  | "failed"
+  | "linked";
+
+export type ScanIngestFileStatus =
+  | "uploaded"
+  | "processing"
+  | "processed"
+  | "failed";
+
+export type ScanIngestItemStatus =
+  | "pending_review"
+  | "ready_to_link"
+  | "linked"
+  | "failed";
 
 /** Label mapping from TCGPlayer suffix to card_images label */
 export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
