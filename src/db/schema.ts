@@ -9,6 +9,7 @@ export interface Product {
   name: string;
   source: string;
   set_codes: string[] | null;
+  product_set_code: string | null;
   tcgplayer_group_id: number | null;
   released_at: string | null;
   created_at: string;
