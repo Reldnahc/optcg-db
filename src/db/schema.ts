@@ -50,6 +50,10 @@ export interface CardImage {
   scan_thumb_url: string | null;
   scan_source_s3_key: string | null;
   scan_source_url: string | null;
+  scan_derivative_status: ScanDerivativeStatus;
+  scan_derivative_error: string | null;
+  scan_derivative_requested_at: string | null;
+  scan_derivative_processed_at: string | null;
   source_url: string | null;
   artist: string | null;
   artist_ocr: boolean;
@@ -245,6 +249,12 @@ export type ArtistOcrStatus =
   | "failed"
   | "needs_review"
   | "skipped";
+
+export type ScanDerivativeStatus =
+  | "pending"
+  | "processing"
+  | "succeeded"
+  | "failed";
 
 export type ScanIngestBatchStatus =
   | "uploaded"
