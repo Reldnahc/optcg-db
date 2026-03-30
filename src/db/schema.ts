@@ -66,7 +66,6 @@ export interface CardImage {
   artist_ocr_last_error: string | null;
   artist_ocr_last_run_at: string | null;
   artist_ocr_source_url: string | null;
-  is_default: boolean;
   label: string | null;
   classified: boolean;
   created_at: string;
