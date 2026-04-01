@@ -36,6 +36,7 @@ export interface Card {
   block: string | null;
   artist: string | null;
   artist_ocr: boolean;
+  manually_added: boolean;
   created_at: string;
   updated_at: string;
 }

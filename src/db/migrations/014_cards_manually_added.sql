@@ -1,0 +1,2 @@
+ALTER TABLE cards
+  ADD COLUMN IF NOT EXISTS manually_added BOOLEAN NOT NULL DEFAULT false;
