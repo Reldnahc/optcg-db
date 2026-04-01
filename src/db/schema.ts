@@ -19,7 +19,7 @@ export interface Card {
   id: string;
   card_number: string;
   language: string;
-  product_id: string;
+  product_id: string | null;
   true_set_code: string;
   name: string;
   card_type: string;
