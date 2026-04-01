@@ -1,0 +1,2 @@
+ALTER TABLE card_images
+  ADD COLUMN IF NOT EXISTS manually_added BOOLEAN NOT NULL DEFAULT false;
