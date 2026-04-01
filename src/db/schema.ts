@@ -20,6 +20,7 @@ export interface Card {
   card_number: string;
   language: string;
   product_id: string | null;
+  needs_product_resolution: boolean;
   true_set_code: string;
   name: string;
   card_type: string;
