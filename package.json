@@ -22,6 +22,7 @@
     "build": "tsc",
     "migrate": "tsx src/db/migrate.ts",
     "restore": "tsx src/db/restore.ts",
+    "seed:card-dictionary": "tsx src/db/seed-card-dictionary.ts",
     "prepublishOnly": "tsc",
     "typecheck": "tsc --noEmit"
   },
