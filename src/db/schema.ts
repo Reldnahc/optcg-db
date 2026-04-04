@@ -74,6 +74,22 @@ export interface CardImage {
   created_at: string;
 }
 
+export interface CardImageAsset {
+  id: string;
+  card_image_id: string;
+  role: CardImageAssetRole;
+  storage_key: string | null;
+  public_url: string | null;
+  source_url: string | null;
+  mime_type: string | null;
+  bytes: number | null;
+  width: number | null;
+  height: number | null;
+  derived_from_asset_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CardSource {
   id: string;
   card_id: string;
@@ -279,6 +295,14 @@ export type ScanIngestItemStatus =
   | "linked"
   | "failed";
 
+export type CardImageAssetRole =
+  | "image_url"
+  | "image_thumb"
+  | "scan_source"
+  | "scan_url"
+  | "scan_thumb"
+  | "scan_display";
+
 /** Label mapping from TCGPlayer suffix to card_images label */
 export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
   "": "Standard",
@@ -310,3 +334,13 @@ export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
 
 /** Suffixes that indicate the gold variant of an SP label */
 export const TCGPLAYER_GOLD_SP_SUFFIXES = new Set(["(SP) (Gold)"]);
+
+/** Allowed asset roles for card_image_assets */
+export const CARD_IMAGE_ASSET_ROLES = [
+  "image_url",
+  "image_thumb",
+  "scan_source",
+  "scan_url",
+  "scan_thumb",
+  "scan_display",
+] as const satisfies readonly CardImageAssetRole[];
