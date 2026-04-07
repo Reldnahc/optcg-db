@@ -1,6 +1,6 @@
 {
   "name": "optcg-db",
-  "version": "0.4.19",
+  "version": "0.4.20",
   "type": "module",
   "description": "Shared database layer (schema, migrations, connection pool) for the OPTCG Scryfall project",
   "repository": {
