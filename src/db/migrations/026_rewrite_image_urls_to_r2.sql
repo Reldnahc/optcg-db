@@ -26,6 +26,16 @@ BEGIN
   WHERE c.id = ci.card_id
     AND ci.image_url IS NOT NULL;
 
+  -- Stock thumb image
+  UPDATE card_images ci
+  SET image_thumb_url = format(
+        '%s/images/%s/%s/stock/%s/thumb.webp',
+        cdn, upper(c.card_number), lower(c.language), ci.variant_index
+      )
+  FROM cards c
+  WHERE c.id = ci.card_id
+    AND ci.image_thumb_url IS NOT NULL;
+
   -- Linked scan full
   UPDATE card_images ci
   SET scan_url = format(
