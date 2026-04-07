@@ -46,6 +46,7 @@ export interface CardImage {
   id: string;
   card_id: string;
   product_id: string | null;
+  name: string | null;
   variant_index: number;
   image_url: string | null;
   scan_url: string | null;
