@@ -1,6 +1,3 @@
-ALTER TABLE card_images
-  ADD COLUMN IF NOT EXISTS image_thumb_url TEXT;
-
 UPDATE card_images
 SET image_thumb_url = CASE
       WHEN split_part(image_url, '?', 1) ~* '/images/[^/]+/[^/]+/stock/\d+/full\.(png|jpe?g|webp)$'
@@ -17,7 +14,12 @@ SET image_thumb_url = CASE
       ELSE image_thumb_url
     END
 WHERE NULLIF(BTRIM(image_url), '') IS NOT NULL
-  AND NULLIF(BTRIM(image_thumb_url), '') IS NULL;
+  AND (
+    NULLIF(BTRIM(image_thumb_url), '') IS NULL
+    OR image_thumb_url LIKE '%\\1%'
+    OR image_thumb_url LIKE '%\\2%'
+    OR image_thumb_url LIKE '%\\4%'
+  );
 
 INSERT INTO card_image_assets (card_image_id, role, public_url)
 SELECT
