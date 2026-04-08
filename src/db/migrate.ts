@@ -12,6 +12,11 @@ import { logger } from "../shared/logger.js";
 
 const MIGRATIONS_DIR = path.join(import.meta.dirname, "migrations");
 
+function shouldSkipImageUrlRewrite(name: string): boolean {
+  return name === "026_rewrite_image_urls_to_r2.sql"
+    && (process.env.DB_SKIP_IMAGE_URL_REWRITE ?? "false") === "true";
+}
+
 async function ensureMigrationsTable(): Promise<void> {
   await query(`
     CREATE TABLE IF NOT EXISTS _migrations (
@@ -37,6 +42,10 @@ async function runMigration(client: pg.PoolClient, name: string, sql: string): P
   logger.info("Running migration", { name });
   await client.query("BEGIN");
   try {
+    if (shouldSkipImageUrlRewrite(name)) {
+      logger.info("Skipping image URL rewrite body for migration", { name });
+      await client.query("SET LOCAL optcg.skip_image_url_rewrite = 'true'");
+    }
     await client.query(sql);
     await client.query("INSERT INTO _migrations (name) VALUES ($1)", [name]);
     await client.query("COMMIT");
@@ -52,7 +61,6 @@ async function main(): Promise<void> {
     await ensureMigrationsTable();
     const applied = await getAppliedMigrations();
     const files = await getMigrationFiles();
-
     const pending = files.filter((f) => !applied.has(f));
 
     if (pending.length === 0) {

@@ -10,8 +10,14 @@
 
 DO $$
 DECLARE
+  skip_rewrite BOOLEAN := COALESCE(current_setting('optcg.skip_image_url_rewrite', true), 'false') = 'true';
   cdn TEXT := 'https://cdn.poneglyph.one';
 BEGIN
+  IF skip_rewrite THEN
+    RAISE NOTICE 'Skipping image URL rewrite in this environment';
+    RETURN;
+  END IF;
+
   ----------------------------------------------------------------------------
   -- card_images: scalar URL/key columns
   ----------------------------------------------------------------------------

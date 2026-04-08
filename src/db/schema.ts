@@ -49,6 +49,7 @@ export interface CardImage {
   name: string | null;
   variant_index: number;
   image_url: string | null;
+  image_thumb_url: string | null;
   scan_url: string | null;
   scan_thumb_s3_key: string | null;
   scan_thumb_url: string | null;
