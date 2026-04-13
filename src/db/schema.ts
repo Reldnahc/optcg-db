@@ -99,6 +99,48 @@ export interface CardSource {
   created_at: string;
 }
 
+export interface CardImageErratum {
+  id: string;
+  card_image_id: string;
+  ordinal: number;
+  label: string | null;
+  notes: string | null;
+  scan_source_s3_key: string | null;
+  scan_source_url: string | null;
+  scan_url: string | null;
+  scan_display_url: string | null;
+  scan_thumb_url: string | null;
+  scan_derivative_status: ScanDerivativeStatus;
+  scan_derivative_error: string | null;
+  scan_derivative_requested_at: string | null;
+  scan_derivative_processed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BandaiFaqDocument {
+  id: string;
+  language: Language;
+  source_key: string;
+  title: string;
+  pdf_url: string;
+  updated_on: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BandaiFaqEntry {
+  id: string;
+  document_id: string;
+  ordinal: number;
+  card_number: string;
+  card_name: string;
+  question: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DonCard {
   id: string;
   product_id: string;
@@ -232,6 +274,7 @@ export interface ScanIngestItem {
   footer_crop_url: string | null;
   linked_card_id: string | null;
   linked_card_image_id: string | null;
+  linked_card_errata_id: string | null;
   review_notes: string | null;
   error: string | null;
   created_at: string;
