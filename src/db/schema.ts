@@ -102,9 +102,10 @@ export interface CardSource {
 export interface CardImageErratum {
   id: string;
   card_image_id: string;
-  ordinal: number;
+  errata_date: string;
   label: string | null;
-  notes: string | null;
+  before_text: string | null;
+  after_text: string | null;
   scan_source_s3_key: string | null;
   scan_source_url: string | null;
   scan_url: string | null;
