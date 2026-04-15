@@ -1,46 +1,58 @@
 ALTER TABLE products
   ADD COLUMN IF NOT EXISTS slug TEXT;
 
-WITH slug_bases AS (
-  SELECT
-    id,
-    language,
-    name,
-    NULLIF(
-      REGEXP_REPLACE(
-        REGEXP_REPLACE(
-          LOWER(TRIM(name)),
-          '[^a-z0-9]+',
-          '-',
-          'g'
+DO $$
+DECLARE
+  product_record RECORD;
+  base_slug TEXT;
+  candidate_slug TEXT;
+  suffix INTEGER;
+BEGIN
+  FOR product_record IN
+    SELECT
+      id,
+      language,
+      COALESCE(
+        NULLIF(
+          REGEXP_REPLACE(
+            REGEXP_REPLACE(
+              LOWER(TRIM(name)),
+              '[^a-z0-9]+',
+              '-',
+              'g'
+            ),
+            '(^-+|-+$)',
+            '',
+            'g'
+          ),
+          ''
         ),
-        '(^-+|-+$)',
-        '',
-        'g'
-      ),
-      ''
-    ) AS base_slug
-  FROM products
-),
-slug_candidates AS (
-  SELECT
-    id,
-    language,
-    COALESCE(base_slug, 'product') AS normalized_base_slug,
-    ROW_NUMBER() OVER (
-      PARTITION BY language, COALESCE(base_slug, 'product')
-      ORDER BY id
-    ) AS slug_rank
-  FROM slug_bases
-)
-UPDATE products p
-SET slug = CASE
-  WHEN sc.slug_rank = 1 THEN sc.normalized_base_slug
-  ELSE sc.normalized_base_slug || '-' || sc.slug_rank::text
-END
-FROM slug_candidates sc
-WHERE p.id = sc.id
-  AND (p.slug IS NULL OR BTRIM(p.slug) = '');
+        'product'
+      ) AS normalized_base_slug
+    FROM products
+    WHERE slug IS NULL OR BTRIM(slug) = ''
+    ORDER BY language, name, id
+  LOOP
+    base_slug := product_record.normalized_base_slug;
+    candidate_slug := base_slug;
+    suffix := 2;
+
+    WHILE EXISTS (
+      SELECT 1
+      FROM products p
+      WHERE p.language = product_record.language
+        AND p.id <> product_record.id
+        AND p.slug = candidate_slug
+    ) LOOP
+      candidate_slug := base_slug || '-' || suffix::text;
+      suffix := suffix + 1;
+    END LOOP;
+
+    UPDATE products
+    SET slug = candidate_slug
+    WHERE id = product_record.id;
+  END LOOP;
+END $$;
 
 ALTER TABLE products
   ALTER COLUMN slug SET NOT NULL;
