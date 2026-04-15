@@ -7,6 +7,7 @@ export interface Product {
   id: string;
   language: Language;
   name: string;
+  slug: string;
   source: string;
   set_codes: string[] | null;
   product_set_code: string | null;
