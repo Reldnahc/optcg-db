@@ -71,7 +71,7 @@ export interface CardImage {
   artist_ocr_last_error: string | null;
   artist_ocr_last_run_at: string | null;
   artist_ocr_source_url: string | null;
-  label: string | null;
+  label: CardVariantLabel | null;
   classified: boolean;
   manually_added: boolean;
   created_at: string;
@@ -104,7 +104,7 @@ export interface CardImageErratum {
   id: string;
   card_image_id: string;
   errata_date: string;
-  label: string | null;
+  label: CardVariantLabel | null;
   before_text: string | null;
   after_text: string | null;
   scan_source_s3_key: string | null;
@@ -221,7 +221,7 @@ export interface ScrapeLog {
 export interface ScanIngestBatch {
   id: string;
   language: Language;
-  label: string | null;
+  label: CardVariantLabel | null;
   source: string;
   status: ScanIngestBatchStatus;
   raw_prefix: string;
@@ -350,29 +350,60 @@ export type CardImageAssetRole =
   | "scan_thumb"
   | "scan_display";
 
+/** Canonical card image variant labels */
+export const CARD_VARIANT_LABELS = [
+  "Standard",
+  "Alternate Art",
+  "Manga Art",
+  "Red Manga Art",
+  "SP",
+  "Gold SP",
+  "Silver SP",
+  "TR",
+  "Jolly Roger Foil",
+  "Textured Foil",
+  "Full Art",
+  "Dash Pack",
+  "Promo",
+  "Reprint",
+  "Winner",
+  "Offline Participant",
+  "Offline Finalist",
+  "Offline Champion",
+  "Online Participant",
+  "Online Finalist",
+  "Online Champion",
+  "Judge",
+  "God Pack",
+  "Release Event",
+  "Other",
+] as const;
+
+export type CardVariantLabel = (typeof CARD_VARIANT_LABELS)[number];
+
 /** Label mapping from TCGPlayer suffix to card_images label */
-export const TCGPLAYER_LABEL_MAP: Record<string, string> = {
+export const TCGPLAYER_LABEL_MAP: Record<string, CardVariantLabel> = {
   "": "Standard",
   "(Alternate Art)": "Alternate Art",
   "(SP)": "SP",
-  "(SP) (Gold)": "SP",
-  "(SP) (Silver)": "SP",
+  "(SP) (Gold)": "Gold SP",
+  "(SP) (Silver)": "Silver SP",
   "(SP) (Wanted Poster)": "SP",
   "(Wanted Poster)": "SP",
   "(Manga)": "Manga Art",
   "(Parallel) (Manga)": "Manga Art",
   "(Alternate Art) (Manga)": "Manga Art",
   "(Parallel) (Manga) (Alternate Art)": "Manga Art",
-  "(Gold)": "Gold",
+  "(Gold)": "Other",
   "(Dash Pack)": "Dash Pack",
-  "(Box Topper)": "Box Topper",
+  "(Box Topper)": "Other",
   "(Full Art)": "Full Art",
   "(Promo)": "Promo",
   "(Promo Reprint)": "Reprint",
   "(Reprint)": "Reprint",
   "(Parallel)": "Alternate Art",
   "(Super Alternate Art)": "Alternate Art",
-  "(Red Super Alternate Art)": "Alternate Art",
+  "(Red Super Alternate Art)": "Red Manga Art",
   "(Textured Foil)": "Textured Foil",
   "(Pirate Foil)": "Jolly Roger Foil",
   "(Jolly Roger Foil)": "Jolly Roger Foil",
