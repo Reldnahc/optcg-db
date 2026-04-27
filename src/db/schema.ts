@@ -60,6 +60,20 @@ export interface CardImage {
   scan_derivative_error: string | null;
   scan_derivative_requested_at: string | null;
   scan_derivative_processed_at: string | null;
+  crop_focus_x: number | null;
+  crop_focus_y: number | null;
+  crop_focus_face_count: number | null;
+  crop_focus_box_x: number | null;
+  crop_focus_box_y: number | null;
+  crop_focus_box_width: number | null;
+  crop_focus_box_height: number | null;
+  crop_focus_status: CropFocusStatus;
+  crop_focus_error: string | null;
+  crop_focus_attempts: number;
+  crop_focus_source_url: string | null;
+  crop_focus_source_kind: CropFocusSourceKind | null;
+  crop_focus_model: string | null;
+  crop_focus_processed_at: string | null;
   source_url: string | null;
   artist: string | null;
   artist_ocr: boolean;
@@ -321,6 +335,18 @@ export type ScanDerivativeStatus =
   | "processing"
   | "succeeded"
   | "failed";
+
+export type CropFocusStatus =
+  | "pending"
+  | "processing"
+  | "succeeded"
+  | "failed";
+
+export type CropFocusSourceKind =
+  | "scan_display"
+  | "scan"
+  | "scan_source"
+  | "sample";
 
 export type ScanIngestBatchStatus =
   | "uploaded"
