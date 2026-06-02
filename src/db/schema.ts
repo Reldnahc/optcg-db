@@ -297,6 +297,112 @@ export interface ScanIngestItem {
   updated_at: string;
 }
 
+export type AuthCosmeticSlot = "playmat" | "don_sleeve" | "deck_sleeve";
+
+export interface AuthUser {
+  id: string;
+  username: string;
+  display_name: string;
+  email: string | null;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthPasswordCredential {
+  id: string;
+  user_id: string;
+  password_hash: string;
+  password_algorithm: string;
+  password_params: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  last_used_at: string | null;
+}
+
+export interface AuthSession {
+  id: string;
+  user_id: string;
+  token_hash: string;
+  token_hash_algorithm: string;
+  created_at: string;
+  last_used_at: string | null;
+  expires_at: string;
+  revoked_at: string | null;
+  created_ip: string | null;
+  created_user_agent: string | null;
+}
+
+export interface SavedDeck {
+  id: string;
+  user_id: string;
+  name: string;
+  deck_hash: string | null;
+  deck: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SavedDonDeck {
+  id: string;
+  user_id: string;
+  name: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Cosmetic {
+  id: string;
+  slot: AuthCosmeticSlot;
+  key: string;
+  name: string;
+  description: string | null;
+  asset: Record<string, unknown>;
+  is_default: boolean;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserCosmeticEntitlement {
+  id: string;
+  user_id: string;
+  cosmetic_id: string;
+  source: string | null;
+  granted_at: string;
+  revoked_at: string | null;
+}
+
+export interface Loadout {
+  id: string;
+  user_id: string;
+  name: string;
+  main_deck_id: string;
+  don_deck_id: string | null;
+  playmat_cosmetic_id: string | null;
+  playmat_cosmetic_slot: "playmat";
+  don_sleeve_cosmetic_id: string | null;
+  don_sleeve_cosmetic_slot: "don_sleeve";
+  deck_sleeve_cosmetic_id: string | null;
+  deck_sleeve_cosmetic_slot: "deck_sleeve";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SimHandoffToken {
+  id: string;
+  user_id: string;
+  session_id: string;
+  loadout_id: string;
+  lobby_id: string | null;
+  seat_id: string | null;
+  token_id: string;
+  issued_at: string;
+  expires_at: string;
+  revoked_at: string | null;
+}
+
 /** Supported languages */
 export type Language = "en" | "ja" | "fr" | "zh";
 
