@@ -222,6 +222,15 @@ export interface TcgplayerPrice {
   fetched_at: string;
 }
 
+export interface TcgcsvSyncState {
+  source: string;
+  upstream_last_updated: string;
+  upstream_last_updated_at: string;
+  last_successful_sync_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ScrapeLog {
   id: string;
   ran_at: string;
@@ -298,6 +307,7 @@ export interface ScanIngestItem {
 }
 
 export type AuthCosmeticSlot = "playmat" | "don_sleeve" | "deck_sleeve";
+export type DeckCollectionKind = "deck" | "list";
 
 export interface AuthUser {
   id: string;
@@ -333,12 +343,31 @@ export interface AuthSession {
   created_user_agent: string | null;
 }
 
+export interface SavedDeckFolder {
+  id: string;
+  user_id: string;
+  name: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SavedDeck {
   id: string;
   user_id: string;
   name: string;
   deck_hash: string | null;
-  deck: Record<string, unknown>;
+  deck: Record<string, unknown> | null;
+  folder_id: string | null;
+  kind: DeckCollectionKind;
+  leader_card_number: string | null;
+  leader_variant_index: number | null;
+  leader_copy_count: number;
+  preview_card_number: string | null;
+  preview_variant_index: number | null;
+  max_copies_of_single_card: number;
+  main_count: number;
+  favorite: boolean;
   created_at: string;
   updated_at: string;
 }
