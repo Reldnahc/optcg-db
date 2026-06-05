@@ -368,6 +368,13 @@ export interface SavedDeck {
   max_copies_of_single_card: number;
   main_count: number;
   favorite: boolean;
+  don_deck_id: string | null;
+  playmat_cosmetic_id: string | null;
+  playmat_cosmetic_slot: "playmat";
+  don_sleeve_cosmetic_id: string | null;
+  don_sleeve_cosmetic_slot: "don_sleeve";
+  deck_sleeve_cosmetic_id: string | null;
+  deck_sleeve_cosmetic_slot: "deck_sleeve";
   created_at: string;
   updated_at: string;
 }
@@ -401,22 +408,6 @@ export interface UserCosmeticEntitlement {
   source: string | null;
   granted_at: string;
   revoked_at: string | null;
-}
-
-export interface Loadout {
-  id: string;
-  user_id: string;
-  name: string;
-  main_deck_id: string;
-  don_deck_id: string | null;
-  playmat_cosmetic_id: string | null;
-  playmat_cosmetic_slot: "playmat";
-  don_sleeve_cosmetic_id: string | null;
-  don_sleeve_cosmetic_slot: "don_sleeve";
-  deck_sleeve_cosmetic_id: string | null;
-  deck_sleeve_cosmetic_slot: "deck_sleeve";
-  created_at: string;
-  updated_at: string;
 }
 
 export interface SimHandoffToken {
