@@ -119,6 +119,12 @@ CREATE TABLE IF NOT EXISTS sim.match_replays (
       initial_snapshot IS NOT NULL
       OR (rng_seed_revealed IS NOT NULL AND initial_deck_orders IS NOT NULL)
     ),
+  CONSTRAINT sim_match_replays_deterministic_entries_array_check
+    CHECK (jsonb_typeof(deterministic_entries) = 'array'),
+  CONSTRAINT sim_match_replays_audit_entries_array_check
+    CHECK (jsonb_typeof(audit_entries) = 'array'),
+  CONSTRAINT sim_match_replays_checkpoints_array_check
+    CHECK (jsonb_typeof(checkpoints) = 'array'),
   CONSTRAINT sim_match_replays_artifact_size_check
     CHECK (artifact_size_bytes IS NULL OR artifact_size_bytes >= 0),
   CONSTRAINT sim_match_replays_artifact_pair_check
@@ -145,8 +151,29 @@ CREATE TABLE IF NOT EXISTS sim.match_rollbacks (
   CONSTRAINT sim_match_rollbacks_class_check
     CHECK (rollback_class IN ('safe', 'hidden-info-exposed', 'judge-only', 'not-rollbackable')),
   CONSTRAINT sim_match_rollbacks_seq_check CHECK (from_state_seq >= to_state_seq),
+  CONSTRAINT sim_match_rollbacks_approved_by_user_ids_array_check
+    CHECK (jsonb_typeof(approved_by_user_ids) = 'array'),
   CONSTRAINT sim_match_rollbacks_reason_check CHECK (char_length(reason) BETWEEN 1 AND 1000)
 );
+
+ALTER TABLE sim.matches
+  DROP CONSTRAINT IF EXISTS sim_matches_first_player_seat_fk,
+  DROP CONSTRAINT IF EXISTS sim_matches_first_player_chooser_seat_fk,
+  DROP CONSTRAINT IF EXISTS sim_matches_winner_seat_fk;
+
+ALTER TABLE sim.matches
+  ADD CONSTRAINT sim_matches_first_player_seat_fk
+    FOREIGN KEY (id, first_player_seat_id)
+    REFERENCES sim.match_players(match_id, seat_id)
+    DEFERRABLE INITIALLY DEFERRED,
+  ADD CONSTRAINT sim_matches_first_player_chooser_seat_fk
+    FOREIGN KEY (id, first_player_chooser_seat_id)
+    REFERENCES sim.match_players(match_id, seat_id)
+    DEFERRABLE INITIALLY DEFERRED,
+  ADD CONSTRAINT sim_matches_winner_seat_fk
+    FOREIGN KEY (id, winner_seat_id)
+    REFERENCES sim.match_players(match_id, seat_id)
+    DEFERRABLE INITIALLY DEFERRED;
 
 CREATE INDEX IF NOT EXISTS sim_matches_status_started_idx
   ON sim.matches(status, started_at DESC);
@@ -189,6 +216,9 @@ CREATE INDEX IF NOT EXISTS sim_match_rollbacks_match_created_idx
 
 COMMENT ON SCHEMA sim IS
   'Simulator-owned durable match, replay, and stats data. Account authority remains in auth.';
+
+COMMENT ON COLUMN sim.matches.format_id IS
+  'Simulator format profile key such as standard-bo1; intentionally distinct from the card legality formats.id UUID.';
 
 COMMENT ON TABLE sim.match_players IS
   'One row per player seat in a simulator match. Stores match-time loadout snapshots for replay and meta stats.';
