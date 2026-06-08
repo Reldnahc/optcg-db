@@ -423,6 +423,136 @@ export interface SimHandoffToken {
   revoked_at: string | null;
 }
 
+export type SimMatchStatus =
+  | "active"
+  | "completed"
+  | "draw"
+  | "abandoned"
+  | "errored"
+  | "no_contest";
+
+export type SimGameType = "ranked" | "unranked" | "custom" | "dev";
+
+export type SimMatchPlayerResult =
+  | "win"
+  | "loss"
+  | "draw"
+  | "no_contest"
+  | "abandoned"
+  | "errored";
+
+export type SimReplayRngAlgorithm = "pcg32" | "xoshiro256ss" | "test-fixed";
+
+export type SimRollbackMode = "mutual" | "judge" | "auto";
+
+export type SimRollbackClass =
+  | "safe"
+  | "hidden-info-exposed"
+  | "judge-only"
+  | "not-rollbackable";
+
+export interface SimMatch {
+  id: string;
+  status: SimMatchStatus;
+  game_type: SimGameType;
+  format_id: string;
+  ladder_id: string | null;
+  lobby_id: string | null;
+  queue_id: string | null;
+  creation_source: Record<string, unknown>;
+  spectator_policy: Record<string, unknown>;
+  disconnect_policy: Record<string, unknown>;
+  rollback_policy: Record<string, unknown>;
+  runtime_versions: Record<string, unknown>;
+  card_manifest_hash: string;
+  card_manifest_snapshot: Record<string, unknown>;
+  first_player_seat_id: string | null;
+  first_player_chooser_seat_id: string | null;
+  winner_user_id: string | null;
+  winner_seat_id: string | null;
+  result_reason: string | null;
+  win_type: string | null;
+  started_at: string;
+  ended_at: string | null;
+  turn_count: number | null;
+  action_count: number;
+  final_state_hash: string | null;
+  final_state_seq: number | null;
+  error_payload: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SimMatchPlayer {
+  id: string;
+  match_id: string;
+  seat_id: string;
+  user_id: string | null;
+  saved_deck_id: string | null;
+  handoff_token_id: string | null;
+  display_name: string | null;
+  leader_card_number: string;
+  leader_variant_index: number | null;
+  deck_hash: string | null;
+  deck_snapshot: Record<string, unknown>;
+  resolved_loadout_snapshot: Record<string, unknown>;
+  cosmetic_snapshot: Record<string, unknown>;
+  starting_deck_order_hash: string | null;
+  result: SimMatchPlayerResult | null;
+  result_reason: string | null;
+  went_first: boolean | null;
+  chose_first: boolean | null;
+  is_winner: boolean;
+  final_life_count: number | null;
+  created_at: string;
+}
+
+export interface SimMatchReplay {
+  id: string;
+  match_id: string;
+  replay_format_version: string;
+  engine_version: string;
+  rules_version: string;
+  card_data_version: string;
+  effect_definitions_version: string;
+  custom_handler_version: string;
+  banlist_version: string;
+  protocol_version: string;
+  rng_algorithm: SimReplayRngAlgorithm;
+  rng_seed_commitment: string | null;
+  rng_seed_revealed: string | null;
+  manifest_hash: string;
+  manifest_snapshot: Record<string, unknown>;
+  initial_state_hash: string;
+  final_state_hash: string | null;
+  initial_snapshot: Record<string, unknown> | null;
+  initial_deck_orders: Record<string, unknown> | null;
+  deterministic_entries: unknown[];
+  audit_entries: unknown[];
+  checkpoints: unknown[];
+  final_state: Record<string, unknown> | null;
+  compressed: boolean;
+  artifact_storage: string | null;
+  artifact_key: string | null;
+  artifact_sha256: string | null;
+  artifact_size_bytes: string | null;
+  created_at: string;
+}
+
+export interface SimMatchRollback {
+  id: string;
+  match_id: string;
+  mode: SimRollbackMode;
+  rollback_class: SimRollbackClass;
+  from_state_seq: number;
+  to_state_seq: number;
+  requested_by_user_id: string | null;
+  approved_by_user_ids: unknown[];
+  admin_user_id: string | null;
+  reason: string;
+  created_at: string;
+}
+
 /** Supported languages */
 export type Language = "en" | "ja" | "fr" | "zh";
 
