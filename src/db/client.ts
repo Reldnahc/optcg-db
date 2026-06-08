@@ -22,6 +22,13 @@ export interface DbConfig {
   ssl: boolean;
 }
 
+export interface DbTransactionClient {
+  query<T extends pg.QueryResultRow = pg.QueryResultRow>(
+    text: string,
+    params?: unknown[]
+  ): Promise<pg.QueryResult<T>>;
+}
+
 /**
  * Build DB config from environment variables.
  * Only requires the DB_* vars — no S3/Discord/ECS needed.
@@ -79,6 +86,45 @@ export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(
   } catch (error) {
     logQueryTiming(text, params, null, startedAt, error);
     throw error;
+  }
+}
+
+export async function withTransaction<T>(
+  callback: (client: DbTransactionClient) => Promise<T>
+): Promise<T> {
+  const client = await getPool().connect();
+
+  try {
+    await client.query("BEGIN");
+    const result = await callback({
+      query(text, params) {
+        const startedAt = process.hrtime.bigint();
+        return client
+          .query(text, params)
+          .then((queryResult) => {
+            logQueryTiming(text, params, queryResult.rowCount, startedAt);
+            return queryResult;
+          })
+          .catch((error: unknown) => {
+            logQueryTiming(text, params, null, startedAt, error);
+            throw error;
+          });
+      },
+    });
+    await client.query("COMMIT");
+    return result;
+  } catch (error) {
+    await client.query("ROLLBACK").catch((rollbackError: unknown) => {
+      logger.error("Database transaction rollback failed", {
+        error:
+          rollbackError instanceof Error
+            ? rollbackError.message
+            : String(rollbackError),
+      });
+    });
+    throw error;
+  } finally {
+    client.release();
   }
 }
 
