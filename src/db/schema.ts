@@ -163,6 +163,156 @@ export interface DonCard {
   character: string;
   finish: string;
   image_url: string | null;
+  tcgplayer_product_id: number | null;
+  tcgplayer_url: string | null;
+  tcgplayer_image_url: string | null;
+  name: string | null;
+  clean_name: string | null;
+  source_label: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Sleeve {
+  id: string;
+  language: Language;
+  source: SleeveSource;
+  source_url: string | null;
+  source_product_code: string | null;
+  source_design_index: number;
+  name: string;
+  product_name: string | null;
+  release_date: string | null;
+  delivery_month: string | null;
+  msrp_amount: string | null;
+  msrp_currency: string | null;
+  contents: string | null;
+  image_url: string | null;
+  thumbnail_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SleeveImageAsset {
+  id: string;
+  sleeve_id: string;
+  role: SleeveImageAssetRole;
+  source: SleeveImageAssetSource;
+  storage_key: string | null;
+  public_url: string | null;
+  source_url: string | null;
+  content_type: string | null;
+  width: number | null;
+  height: number | null;
+  byte_size: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DonImageAsset {
+  id: string;
+  don_card_id: string;
+  role: DonImageAssetRole;
+  source: DonImageAssetSource;
+  storage_key: string | null;
+  public_url: string | null;
+  source_url: string | null;
+  content_type: string | null;
+  width: number | null;
+  height: number | null;
+  byte_size: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SleeveScanBatch {
+  id: string;
+  label: string | null;
+  status: CosmeticScanBatchStatus;
+  raw_prefix: string;
+  total_files: number;
+  total_items: number;
+  processed_at: string | null;
+  last_error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SleeveScanFile {
+  id: string;
+  batch_id: string;
+  file_name: string;
+  s3_key: string;
+  public_url: string;
+  content_type: string | null;
+  status: CosmeticScanFileStatus;
+  processed_at: string | null;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SleeveScanItem {
+  id: string;
+  batch_id: string;
+  file_id: string;
+  ordinal: number;
+  status: CosmeticScanItemStatus;
+  source_s3_key: string | null;
+  source_url: string | null;
+  display_s3_key: string | null;
+  display_url: string | null;
+  thumb_s3_key: string | null;
+  thumb_url: string | null;
+  linked_sleeve_id: string | null;
+  review_notes: string | null;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DonScanBatch {
+  id: string;
+  label: string | null;
+  status: CosmeticScanBatchStatus;
+  raw_prefix: string;
+  total_files: number;
+  total_items: number;
+  processed_at: string | null;
+  last_error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DonScanFile {
+  id: string;
+  batch_id: string;
+  file_name: string;
+  s3_key: string;
+  public_url: string;
+  content_type: string | null;
+  status: CosmeticScanFileStatus;
+  processed_at: string | null;
+  error: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DonScanItem {
+  id: string;
+  batch_id: string;
+  file_id: string;
+  ordinal: number;
+  status: CosmeticScanItemStatus;
+  source_s3_key: string | null;
+  source_url: string | null;
+  display_s3_key: string | null;
+  display_url: string | null;
+  thumb_s3_key: string | null;
+  thumb_url: string | null;
+  linked_don_card_id: string | null;
+  review_notes: string | null;
+  error: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -571,6 +721,53 @@ export type Attribute = "Strike" | "Slash" | "Special" | "Wisdom" | "Ranged";
 /** DON!! card finish types */
 export type DonFinish = "Normal" | "Foil" | "Gold";
 
+/** Sleeve catalog source */
+export type SleeveSource = "bandai" | "manual";
+
+/** Sleeve image asset roles */
+export type SleeveImageAssetRole =
+  | "official_source"
+  | "official_display"
+  | "official_thumb"
+  | "scan_source"
+  | "scan_display"
+  | "scan_thumb";
+
+/** Sleeve image asset source */
+export type SleeveImageAssetSource = "bandai" | "admin_upload";
+
+/** DON!! image asset roles */
+export type DonImageAssetRole =
+  | "tcgplayer_source"
+  | "tcgplayer_display"
+  | "tcgplayer_thumb"
+  | "scan_source"
+  | "scan_display"
+  | "scan_thumb";
+
+/** DON!! image asset source */
+export type DonImageAssetSource = "tcgplayer" | "admin_upload";
+
+/** Shared scan workflow state for cosmetic ingest tables */
+export type CosmeticScanBatchStatus =
+  | "uploaded"
+  | "processing"
+  | "processed"
+  | "needs_review"
+  | "failed"
+  | "linked";
+
+export type CosmeticScanFileStatus =
+  | "uploaded"
+  | "processing"
+  | "processed"
+  | "failed";
+
+export type CosmeticScanItemStatus =
+  | "pending_review"
+  | "linked"
+  | "failed";
+
 /** TCGPlayer product types */
 export type ProductType = "card" | "sealed" | "don";
 
@@ -704,3 +901,23 @@ export const CARD_IMAGE_ASSET_ROLES = [
   "scan_thumb",
   "scan_display",
 ] as const satisfies readonly CardImageAssetRole[];
+
+/** Allowed asset roles for sleeve_image_assets */
+export const SLEEVE_IMAGE_ASSET_ROLES = [
+  "official_source",
+  "official_display",
+  "official_thumb",
+  "scan_source",
+  "scan_display",
+  "scan_thumb",
+] as const satisfies readonly SleeveImageAssetRole[];
+
+/** Allowed asset roles for don_image_assets */
+export const DON_IMAGE_ASSET_ROLES = [
+  "tcgplayer_source",
+  "tcgplayer_display",
+  "tcgplayer_thumb",
+  "scan_source",
+  "scan_display",
+  "scan_thumb",
+] as const satisfies readonly DonImageAssetRole[];
