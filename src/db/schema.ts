@@ -457,6 +457,7 @@ export interface ScanIngestItem {
 }
 
 export type AuthCosmeticSlot = "playmat" | "don_sleeve" | "deck_sleeve";
+export type AuthAvatarImageSource = "render" | "scan";
 export type DeckCollectionKind = "deck" | "list";
 
 export interface AuthUser {
@@ -465,6 +466,17 @@ export interface AuthUser {
   display_name: string;
   email: string | null;
   email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthUserProfile {
+  user_id: string;
+  avatar_card_image_id: string | null;
+  avatar_image_source: AuthAvatarImageSource | null;
+  avatar_crop_x: string | null;
+  avatar_crop_y: string | null;
+  avatar_crop_size: string | null;
   created_at: string;
   updated_at: string;
 }
