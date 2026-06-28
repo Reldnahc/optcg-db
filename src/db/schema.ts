@@ -529,6 +529,16 @@ export interface AuthUserTitleUnlock {
   updated_at: string;
 }
 
+export interface AuthUserFeatureOverride {
+  user_id: string;
+  feature_key: string;
+  enabled: boolean;
+  granted_by_admin_email: string;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AuthUserStat {
   user_id: string;
   stat_key: string;
