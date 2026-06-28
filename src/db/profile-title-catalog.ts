@@ -63,6 +63,14 @@ export const colorMasterySeries: ProfileTitleCatalogSeries = {
   sort_order: 100,
 };
 
+export const botWinsSeries: ProfileTitleCatalogSeries = {
+  key: "bot_wins",
+  label: "Bot Wins",
+  description: "Titles earned by winning games against the bot.",
+  active: true,
+  sort_order: 200,
+};
+
 const colorConfigs: readonly ColorConfig[] = [
   { key: "red", label: "Red", color: "#ef4444", glow: "#f87171" },
   { key: "green", label: "Green", color: "#22c55e", glow: "#4ade80" },
@@ -78,6 +86,21 @@ const colorMasteryTiers: readonly ColorMasteryTier[] = [
   { key: "enjoyer", label: "Enjoyer", threshold: 100n },
   { key: "expert", label: "Expert", threshold: 500n },
   { key: "master", label: "Master", threshold: 1000n },
+];
+
+type BotWinTier = {
+  key: "basher" | "breaker" | "hunter" | "slayer" | "machine_reaper";
+  titleKey: string;
+  label: string;
+  threshold: bigint;
+};
+
+const botWinTiers: readonly BotWinTier[] = [
+  { key: "basher", titleKey: "first_bot_win", label: "Bot Basher", threshold: 1n },
+  { key: "breaker", titleKey: "bot_wins_breaker", label: "Bot Breaker", threshold: 100n },
+  { key: "hunter", titleKey: "bot_wins_hunter", label: "Bot Hunter", threshold: 500n },
+  { key: "slayer", titleKey: "bot_wins_slayer", label: "Bot Slayer", threshold: 1000n },
+  { key: "machine_reaper", titleKey: "bot_wins_machine_reaper", label: "Machine Reaper", threshold: 5000n },
 ];
 
 function colorBuckets(): ColorBucketConfig[] {
@@ -142,6 +165,52 @@ function colorMasteryStyle(bucket: ColorBucketConfig, tierIndex: number): Record
   };
 }
 
+function botWinStyle(tierIndex: number): Record<string, unknown> {
+  if (tierIndex === 0) {
+    return {
+      text_color: "#e8e9ed",
+      font_family: "display",
+      font_weight: 700,
+      animation: "none",
+    };
+  }
+  if (tierIndex === 1) {
+    return {
+      text_color: "#60a5fa",
+      font_family: "display",
+      font_weight: 750,
+      animation: "none",
+    };
+  }
+  if (tierIndex === 2) {
+    return {
+      text_color: "#60a5fa",
+      font_family: "display",
+      font_weight: 800,
+      glow_color: "#93c5fd",
+      animation: "none",
+    };
+  }
+  if (tierIndex === 3) {
+    return {
+      text_color: "#60a5fa",
+      font_family: "display",
+      font_weight: 900,
+      gradient: { from: "#60a5fa", to: "#c084fc", angle: 90 },
+      glow_color: "#93c5fd",
+      animation: "shine",
+    };
+  }
+  return {
+    text_color: "#f8fafc",
+    font_family: "display",
+    font_weight: 900,
+    gradient: { from: "#f8fafc", via: "#60a5fa", to: "#c084fc", angle: 90 },
+    glow_color: "#c084fc",
+    animation: "shine",
+  };
+}
+
 export function buildProfileTitleCatalog(): ProfileTitleCatalog {
   const titles: ProfileTitleCatalogTitle[] = [];
   const requirements: ProfileTitleCatalogRequirement[] = [];
@@ -169,8 +238,28 @@ export function buildProfileTitleCatalog(): ProfileTitleCatalog {
       });
     }
   }
+  for (const [tierIndex, tier] of botWinTiers.entries()) {
+    titles.push({
+      key: tier.titleKey,
+      label: tier.label,
+      unlock_mode: "automatic",
+      style: botWinStyle(tierIndex),
+      active: true,
+      sort_order: botWinsSeries.sort_order + tierIndex,
+      series_key: botWinsSeries.key,
+      series_item_key: "bot",
+      series_item_label: "Bot",
+      tier_key: tier.key,
+    });
+    requirements.push({
+      title_key: tier.titleKey,
+      stat_key: "bot_matches_won",
+      operator: "gte",
+      threshold: tier.threshold,
+    });
+  }
   return {
-    series: [colorMasterySeries],
+    series: [colorMasterySeries, botWinsSeries],
     titles,
     requirements,
   };
