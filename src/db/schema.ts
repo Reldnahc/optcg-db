@@ -495,6 +495,20 @@ export interface AuthProfileTitle {
   style: Record<string, unknown>;
   active: boolean;
   sort_order: number;
+  series_key: string | null;
+  series_item_key: string | null;
+  series_item_label: string | null;
+  tier_key: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthProfileTitleSeries {
+  key: string;
+  label: string;
+  description: string | null;
+  active: boolean;
+  sort_order: number;
   created_at: string;
   updated_at: string;
 }
