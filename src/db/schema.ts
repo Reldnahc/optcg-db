@@ -458,7 +458,12 @@ export interface ScanIngestItem {
 
 export type AuthCosmeticSlot = "playmat" | "don_sleeve" | "deck_sleeve";
 export type AuthAvatarImageSource = "render" | "scan";
-export type AuthProfileTitleUnlockMode = "no_requirement" | "manual";
+export type AuthProfileTitleUnlockMode =
+  | "no_requirement"
+  | "manual"
+  | "automatic";
+export type AuthUserStatOperation = "increment" | "set" | "max";
+export type AuthProfileTitleRequirementOperator = "gte";
 export type DeckCollectionKind = "deck" | "list";
 
 export interface AuthUser {
@@ -502,6 +507,42 @@ export interface AuthUserTitleUnlock {
   granted_at: string;
   revoked_at: string | null;
   note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AuthUserStat {
+  user_id: string;
+  stat_key: string;
+  value: string;
+  updated_at: string;
+}
+
+export interface AuthUserStatEvent {
+  id: string;
+  source_type: string;
+  source_id: string;
+  user_id: string;
+  stat_key: string;
+  operation: AuthUserStatOperation;
+  value: string;
+  created_at: string;
+}
+
+export interface AuthUserStatDailyActivity {
+  user_id: string;
+  play_date: string;
+  first_source_type: string;
+  first_source_id: string;
+  created_at: string;
+}
+
+export interface AuthProfileTitleRequirement {
+  id: string;
+  title_key: string;
+  stat_key: string;
+  operator: AuthProfileTitleRequirementOperator;
+  threshold: string;
   created_at: string;
   updated_at: string;
 }
