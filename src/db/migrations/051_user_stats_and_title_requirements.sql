@@ -86,3 +86,26 @@ CREATE INDEX IF NOT EXISTS profile_title_requirements_title_idx
 
 CREATE INDEX IF NOT EXISTS profile_title_requirements_stat_idx
   ON auth.profile_title_requirements(stat_key);
+
+INSERT INTO auth.profile_titles (key, label, unlock_mode, style, active, sort_order)
+VALUES
+  (
+    'first_bot_win',
+    'Bot Basher',
+    'automatic',
+    '{"text_color":"#a7f3d0","font_family":"display","font_weight":800,"glow_color":"#34d399","animation":"none"}',
+    true,
+    100
+  )
+ON CONFLICT (key) DO UPDATE SET
+  label = EXCLUDED.label,
+  unlock_mode = EXCLUDED.unlock_mode,
+  style = EXCLUDED.style,
+  active = EXCLUDED.active,
+  sort_order = EXCLUDED.sort_order,
+  updated_at = now();
+
+INSERT INTO auth.profile_title_requirements (title_key, stat_key, operator, threshold)
+VALUES
+  ('first_bot_win', 'bot_matches_won', 'gte', 1)
+ON CONFLICT DO NOTHING;
