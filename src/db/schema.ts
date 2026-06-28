@@ -16,6 +16,8 @@ export interface Product {
   created_at: string;
 }
 
+export type CardRulesTextSource = "bandai" | "manual";
+
 export interface Card {
   id: string;
   card_number: string;
@@ -34,7 +36,9 @@ export interface Card {
   attribute: string[] | null;
   types: string[];
   effect: string | null;
+  effect_source: CardRulesTextSource;
   trigger: string | null;
+  trigger_source: CardRulesTextSource;
   block: string | null;
   artist: string | null;
   artist_ocr: boolean;
