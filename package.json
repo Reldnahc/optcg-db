@@ -24,7 +24,8 @@
     "restore": "tsx src/db/restore.ts",
     "seed:card-dictionary": "tsx src/db/seed-card-dictionary.ts",
     "prepublishOnly": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node test/profile-title-catalog.test.mjs"
   },
   "dependencies": {
     "dotenv": "^17.3.1",
