@@ -47,6 +47,7 @@ Add catalog metadata to `auth.profile_titles`:
 
 - `series_key TEXT REFERENCES auth.profile_title_series(key)`
 - `series_item_key TEXT`
+- `series_item_label TEXT`
 - `tier_key TEXT`
 
 Keep existing title identity and rendering fields:
@@ -85,6 +86,7 @@ Series metadata:
 
 - `series_key`: `color_mastery`
 - `series_item_key`: color bucket, such as `mono_red` or `red_blue`
+- `series_item_label`: display color bucket, such as `Red` or `Red-Blue`
 - `tier_key`: one of `novice`, `adept`, `enjoyer`, `expert`, `master`
 
 ## Color Mastery Catalog
