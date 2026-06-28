@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
-import { buildProfileTitleCatalog } from "../dist/db/profile-title-catalog.js";
+import {
+  buildLeaderNameTitleCatalog,
+  buildProfileTitleCatalog,
+  leaderNameKey,
+} from "../dist/db/profile-title-catalog.js";
 
 const catalog = buildProfileTitleCatalog();
 const titles = catalog.titles;
@@ -152,4 +156,69 @@ assert.deepEqual(
     ["bot_wins_slayer", "bot_matches_won", "1000"],
     ["bot_wins_machine_reaper", "bot_matches_won", "5000"],
   ],
+);
+
+assert.equal(leaderNameKey("Monkey.D.Luffy"), "monkey-d-luffy");
+assert.equal(leaderNameKey("Roronoa Zoro"), "roronoa-zoro");
+assert.equal(leaderNameKey("   Trafalgar   Law   "), "trafalgar-law");
+
+const leaderCatalog = buildLeaderNameTitleCatalog([
+  "Monkey.D.Luffy",
+  "Monkey D Luffy",
+  "Roronoa Zoro",
+]);
+assert.deepEqual(leaderCatalog.series, [
+  {
+    key: "leader_name_mastery",
+    label: "Leader Name Mastery",
+    description: "Titles earned by completing games with leaders that share a canonical name.",
+    active: true,
+    sort_order: 300,
+  },
+]);
+assert.equal(leaderCatalog.titles.length, 10);
+assert.equal(leaderCatalog.requirements.length, 10);
+assert.deepEqual(
+  leaderCatalog.titles
+    .filter((title) => title.series_item_key === "monkey-d-luffy")
+    .map((title) => [title.key, title.label, title.tier_key]),
+  [
+    ["leader_name_mastery_monkey-d-luffy_novice", "Monkey.D.Luffy Novice", "novice"],
+    ["leader_name_mastery_monkey-d-luffy_adept", "Monkey.D.Luffy Adept", "adept"],
+    ["leader_name_mastery_monkey-d-luffy_enjoyer", "Monkey.D.Luffy Enjoyer", "enjoyer"],
+    ["leader_name_mastery_monkey-d-luffy_expert", "Monkey.D.Luffy Expert", "expert"],
+    ["leader_name_mastery_monkey-d-luffy_master", "Monkey.D.Luffy Master", "master"],
+  ],
+);
+assert.deepEqual(
+  leaderCatalog.requirements
+    .filter((requirement) => requirement.title_key.startsWith("leader_name_mastery_monkey-d-luffy_"))
+    .map((requirement) => [requirement.stat_key, requirement.threshold.toString()]),
+  [
+    ["leader_name_matches_completed:monkey-d-luffy", "10"],
+    ["leader_name_matches_completed:monkey-d-luffy", "25"],
+    ["leader_name_matches_completed:monkey-d-luffy", "100"],
+    ["leader_name_matches_completed:monkey-d-luffy", "500"],
+    ["leader_name_matches_completed:monkey-d-luffy", "1000"],
+  ],
+);
+assert.deepEqual(
+  leaderCatalog.titles.find((title) => title.key === "leader_name_mastery_monkey-d-luffy_novice")?.style,
+  {
+    text_color: "#e8e9ed",
+    font_family: "display",
+    font_weight: 700,
+    animation: "none",
+  },
+);
+assert.deepEqual(
+  leaderCatalog.titles.find((title) => title.key === "leader_name_mastery_monkey-d-luffy_master")?.style,
+  {
+    text_color: "#22d3ee",
+    font_family: "display",
+    font_weight: 900,
+    gradient: { from: "#22d3ee", via: "#a78bfa", to: "#67e8f9", angle: 90 },
+    glow_color: "#67e8f9",
+    animation: "shine",
+  },
 );
