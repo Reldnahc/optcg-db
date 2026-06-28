@@ -20,7 +20,7 @@ This pass does not add a locked-title viewer, does not emit unlock notifications
 - No Discord, webhook, or public notification when a title unlocks.
 - No historical backfill. There are no existing users that need it now.
 - No runtime enforcement of title style tiers.
-- No public selected/unlocked title API shape change in this pass.
+- No locked-title/progress API in this pass.
 - No per-card, win-based, streak-based, or general stat title catalogs in this first pass.
 
 ## Existing Behavior To Preserve
@@ -170,12 +170,33 @@ No retroactive user unlock backfill runs in this pass.
 
 ## API And UI
 
-Current title APIs should remain effectively unchanged for clients:
+The current title APIs remain unlocked-only, but unlocked title objects should include optional catalog metadata so clients can build grouped selectors without a locked-title viewer.
 
-- Selected title remains `key`, `label`, and `style`.
-- Unlocked titles remain `key`, `label`, and `style`.
-- Series metadata is internal for now.
-- Locked title catalog data is not exposed yet.
+Selected and unlocked title objects keep the existing fields:
+
+- `key`
+- `label`
+- `style`
+
+Add optional metadata fields:
+
+- `series_key`
+- `series_label`
+- `series_item_key`
+- `series_item_label`
+- `tier_key`
+
+For Color Mastery:
+
+- `series_key`: `color_mastery`
+- `series_label`: `Color Mastery`
+- `series_item_key`: color bucket, such as `mono_red` or `red_blue`
+- `series_item_label`: display color bucket, such as `Red` or `Red-Blue`
+- `tier_key`: `novice`, `adept`, `enjoyer`, `expert`, or `master`
+
+The metadata fields must be optional or nullable so existing titles such as `pirate_rookie` and `founder_gold` remain valid without catalog membership.
+
+Locked title catalog data and progress are not exposed yet.
 
 The web account page continues to show only unlocked/no-requirement titles. The future unlock viewer will be designed separately.
 
@@ -191,3 +212,5 @@ Add tests for:
 - Requirements use `leader_color_matches_completed:<bucket>` with thresholds `10`, `25`, `100`, `500`, and `1000`.
 - The sync command only manages catalog-owned titles.
 - Existing unlocked-title selector behavior remains unchanged.
+- Unlocked title payloads include catalog metadata for Color Mastery titles and preserve existing fields.
+- Manual/no-requirement titles without catalog membership serialize with absent or null metadata fields.
