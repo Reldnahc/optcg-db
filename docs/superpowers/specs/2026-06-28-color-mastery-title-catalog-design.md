@@ -73,19 +73,21 @@ Color Mastery title keys use this shape:
 color_mastery_<color_bucket>_<tier_key>
 ```
 
+`<color_bucket>` uses the existing stat bucket format from the sim stat pipeline, such as `mono-red` or `red-blue`.
+
 Examples:
 
 ```text
-color_mastery_mono_red_novice
-color_mastery_mono_red_master
-color_mastery_red_blue_adept
-color_mastery_purple_black_enjoyer
+color_mastery_mono-red_novice
+color_mastery_mono-red_master
+color_mastery_red-blue_adept
+color_mastery_purple-black_enjoyer
 ```
 
 Series metadata:
 
 - `series_key`: `color_mastery`
-- `series_item_key`: color bucket, such as `mono_red` or `red_blue`
+- `series_item_key`: color bucket, such as `mono-red` or `red-blue`
 - `series_item_label`: display color bucket, such as `Red` or `Red-Blue`
 - `tier_key`: one of `novice`, `adept`, `enjoyer`, `expert`, `master`
 
@@ -192,7 +194,7 @@ For Color Mastery:
 
 - `series_key`: `color_mastery`
 - `series_label`: `Color Mastery`
-- `series_item_key`: color bucket, such as `mono_red` or `red_blue`
+- `series_item_key`: color bucket, such as `mono-red` or `red-blue`
 - `series_item_label`: display color bucket, such as `Red` or `Red-Blue`
 - `tier_key`: `novice`, `adept`, `enjoyer`, `expert`, or `master`
 
