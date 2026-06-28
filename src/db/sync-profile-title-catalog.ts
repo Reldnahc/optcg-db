@@ -1,9 +1,30 @@
 import { closePool, query } from "./client.js";
-import { buildProfileTitleCatalog } from "./profile-title-catalog.js";
+import {
+  buildProfileTitleCatalog,
+  managedProfileTitleSeriesKeys,
+  type ProfileTitleCatalog,
+} from "./profile-title-catalog.js";
 import { logger } from "../shared/logger.js";
 
-async function syncSeries() {
-  const catalog = buildProfileTitleCatalog();
+type LeaderNameRow = {
+  name: string;
+};
+
+async function listLeaderNames(): Promise<string[]> {
+  const result = await query<LeaderNameRow>(
+    `
+      SELECT DISTINCT name
+      FROM cards
+      WHERE language = 'en'
+        AND card_type = 'Leader'
+        AND name IS NOT NULL
+      ORDER BY name ASC
+    `,
+  );
+  return result.rows.map((row) => row.name);
+}
+
+async function syncSeries(catalog: ProfileTitleCatalog) {
   for (const series of catalog.series) {
     await query(
       `
@@ -21,8 +42,7 @@ async function syncSeries() {
   }
 }
 
-async function syncTitles() {
-  const catalog = buildProfileTitleCatalog();
+async function syncTitles(catalog: ProfileTitleCatalog) {
   const titleKeys = catalog.titles.map((title) => title.key);
   for (const title of catalog.titles) {
     await query(
@@ -70,15 +90,14 @@ async function syncTitles() {
     `
       UPDATE auth.profile_titles
       SET active = false, updated_at = now()
-      WHERE series_key = 'color_mastery'
+      WHERE series_key = ANY($2::text[])
         AND NOT (key = ANY($1::text[]))
     `,
-    [titleKeys],
+    [titleKeys, [...managedProfileTitleSeriesKeys]],
   );
 }
 
-async function syncRequirements() {
-  const catalog = buildProfileTitleCatalog();
+async function syncRequirements(catalog: ProfileTitleCatalog) {
   const titleKeys = catalog.titles.map((title) => title.key);
   await query(
     `
@@ -106,12 +125,14 @@ async function syncRequirements() {
 
 async function main() {
   try {
-    await syncSeries();
-    await syncTitles();
-    await syncRequirements();
+    const leaderNames = await listLeaderNames();
+    const catalog = buildProfileTitleCatalog(leaderNames);
+    await syncSeries(catalog);
+    await syncTitles(catalog);
+    await syncRequirements(catalog);
     logger.info("Profile title catalog synced", {
-      series: 1,
-      titles: buildProfileTitleCatalog().titles.length,
+      series: catalog.series.length,
+      titles: catalog.titles.length,
     });
   } catch (error) {
     logger.error("Profile title catalog sync failed", {

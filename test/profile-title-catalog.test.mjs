@@ -3,6 +3,7 @@ import {
   buildLeaderNameTitleCatalog,
   buildProfileTitleCatalog,
   leaderNameKey,
+  managedProfileTitleSeriesKeys,
 } from "../dist/db/profile-title-catalog.js";
 
 const catalog = buildProfileTitleCatalog();
@@ -24,6 +25,11 @@ assert.deepEqual(catalog.series[1], {
   active: true,
   sort_order: 200,
 });
+assert.deepEqual(managedProfileTitleSeriesKeys, [
+  "color_mastery",
+  "bot_wins",
+  "leader_name_mastery",
+]);
 
 assert.equal(titles.length, 110);
 assert.equal(requirements.length, 110);

@@ -92,6 +92,12 @@ export const leaderNameMasterySeries: ProfileTitleCatalogSeries = {
   sort_order: 300,
 };
 
+export const managedProfileTitleSeriesKeys = [
+  colorMasterySeries.key,
+  botWinsSeries.key,
+  leaderNameMasterySeries.key,
+] as const;
+
 const colorConfigs: readonly ColorConfig[] = [
   { key: "red", label: "Red", color: "#ef4444", glow: "#f87171" },
   { key: "green", label: "Green", color: "#22c55e", glow: "#4ade80" },
