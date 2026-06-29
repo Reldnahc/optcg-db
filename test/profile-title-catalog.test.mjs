@@ -10,15 +10,22 @@ const catalog = buildProfileTitleCatalog();
 const titles = catalog.titles;
 const requirements = catalog.requirements;
 
-assert.equal(catalog.series.length, 2);
+assert.equal(catalog.series.length, 3);
 assert.deepEqual(catalog.series[0], {
+  key: "sim_access",
+  label: "Sim Access",
+  description: "Titles granted with simulator access permissions.",
+  active: true,
+  sort_order: 50,
+});
+assert.deepEqual(catalog.series[1], {
   key: "color_mastery",
   label: "Color Mastery",
   description: "Titles earned by completing games with specific leader color identities.",
   active: true,
   sort_order: 100,
 });
-assert.deepEqual(catalog.series[1], {
+assert.deepEqual(catalog.series[2], {
   key: "bot_wins",
   label: "Bot Wins",
   description: "Titles earned by winning games against the bot.",
@@ -26,22 +33,32 @@ assert.deepEqual(catalog.series[1], {
   sort_order: 200,
 });
 assert.deepEqual(managedProfileTitleSeriesKeys, [
+  "sim_access",
   "color_mastery",
   "bot_wins",
   "leader_name_mastery",
 ]);
 
-assert.equal(titles.length, 110);
+assert.equal(titles.length, 112);
 assert.equal(requirements.length, 110);
 
 const keyPattern = /^[a-z0-9][a-z0-9_-]{1,63}$/u;
 for (const title of titles) {
   assert.match(title.key, keyPattern);
-  assert.ok(["color_mastery", "bot_wins"].includes(title.series_key));
-  assert.equal(title.unlock_mode, "automatic");
+  assert.ok(["sim_access", "color_mastery", "bot_wins"].includes(title.series_key));
+  assert.ok(["manual", "automatic"].includes(title.unlock_mode));
   assert.equal(title.active, true);
   assert.equal(typeof title.series_item_label, "string");
 }
+
+const simAccessTitles = titles.filter((title) => title.series_key === "sim_access");
+assert.deepEqual(
+  simAccessTitles.map((title) => [title.key, title.label, title.unlock_mode, title.series_item_key, title.tier_key]),
+  [
+    ["tester", "Tester", "manual", "dev", "access"],
+    ["developer", "Developer", "manual", "local", "access"],
+  ],
+);
 
 const colorTitles = titles.filter((title) => title.series_key === "color_mastery");
 const buckets = new Set(colorTitles.map((title) => title.series_item_key));

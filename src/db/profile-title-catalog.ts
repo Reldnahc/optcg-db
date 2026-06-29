@@ -92,7 +92,16 @@ export const leaderNameMasterySeries: ProfileTitleCatalogSeries = {
   sort_order: 300,
 };
 
+export const simAccessSeries: ProfileTitleCatalogSeries = {
+  key: "sim_access",
+  label: "Sim Access",
+  description: "Titles granted with simulator access permissions.",
+  active: true,
+  sort_order: 50,
+};
+
 export const managedProfileTitleSeriesKeys = [
+  simAccessSeries.key,
   colorMasterySeries.key,
   botWinsSeries.key,
   leaderNameMasterySeries.key,
@@ -336,6 +345,46 @@ function leaderNameStyle(slug: string, tierIndex: number): Record<string, unknow
 export function buildStaticProfileTitleCatalog(): ProfileTitleCatalog {
   const titles: ProfileTitleCatalogTitle[] = [];
   const requirements: ProfileTitleCatalogRequirement[] = [];
+  titles.push(
+    {
+      key: "tester",
+      label: "Tester",
+      unlock_mode: "manual",
+      style: {
+        text_color: "#38bdf8",
+        font_family: "display",
+        font_weight: 800,
+        gradient: { from: "#38bdf8", to: "#a78bfa", angle: 90 },
+        glow_color: "#7dd3fc",
+        animation: "none",
+      },
+      active: true,
+      sort_order: simAccessSeries.sort_order,
+      series_key: simAccessSeries.key,
+      series_item_key: "dev",
+      series_item_label: "Dev Sim",
+      tier_key: "access",
+    },
+    {
+      key: "developer",
+      label: "Developer",
+      unlock_mode: "manual",
+      style: {
+        text_color: "#34d399",
+        font_family: "display",
+        font_weight: 800,
+        gradient: { from: "#34d399", to: "#facc15", angle: 90 },
+        glow_color: "#86efac",
+        animation: "none",
+      },
+      active: true,
+      sort_order: simAccessSeries.sort_order + 1,
+      series_key: simAccessSeries.key,
+      series_item_key: "local",
+      series_item_label: "Local Sim",
+      tier_key: "access",
+    },
+  );
   const buckets = colorBuckets();
   for (const [bucketIndex, bucket] of buckets.entries()) {
     for (const [tierIndex, tier] of colorMasteryTiers.entries()) {
@@ -381,7 +430,7 @@ export function buildStaticProfileTitleCatalog(): ProfileTitleCatalog {
     });
   }
   return {
-    series: [colorMasterySeries, botWinsSeries],
+    series: [simAccessSeries, colorMasterySeries, botWinsSeries],
     titles,
     requirements,
   };
