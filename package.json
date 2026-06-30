@@ -26,7 +26,7 @@
     "seed:card-dictionary": "tsx src/db/seed-card-dictionary.ts",
     "prepublishOnly": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "npm run build && node test/profile-title-catalog.test.mjs"
+    "test": "npm run build && node test/profile-title-catalog.test.mjs && node test/card-rules-text-schema.test.mjs"
   },
   "dependencies": {
     "dotenv": "^17.3.1",

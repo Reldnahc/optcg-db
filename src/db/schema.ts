@@ -16,7 +16,28 @@ export interface Product {
   created_at: string;
 }
 
-export type CardRulesTextSource = "bandai" | "manual";
+export const CARD_RULES_TEXT_SOURCES = [
+  "bandai",
+  "manual",
+  "spoiler_raw",
+  "spoiler_llm",
+] as const;
+
+export type CardRulesTextSource = (typeof CARD_RULES_TEXT_SOURCES)[number];
+
+export const CARD_RULES_TEXT_INGEST_STATUSES = [
+  "raw_supported",
+  "llm_supported",
+  "unsupported",
+] as const;
+
+export type CardRulesTextIngestStatus =
+  (typeof CARD_RULES_TEXT_INGEST_STATUSES)[number];
+
+export type ProvisionalCardRulesTextSource = Extract<
+  CardRulesTextSource,
+  "spoiler_raw" | "spoiler_llm"
+>;
 
 export interface Card {
   id: string;
@@ -43,6 +64,28 @@ export interface Card {
   artist: string | null;
   artist_ocr: boolean;
   manually_added: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CardRulesTextIngestAttempt {
+  id: string;
+  card_number: string;
+  language: string;
+  source: string;
+  discord_channel_id: string | null;
+  discord_message_id: string | null;
+  raw_effect: string | null;
+  raw_trigger: string | null;
+  raw_validation: Record<string, unknown> | null;
+  normalized_effect: string | null;
+  normalized_trigger: string | null;
+  normalized_validation: Record<string, unknown> | null;
+  llm_model: string | null;
+  llm_prompt_version: string | null;
+  status: CardRulesTextIngestStatus;
+  active_effect_source: ProvisionalCardRulesTextSource | null;
+  active_trigger_source: ProvisionalCardRulesTextSource | null;
   created_at: string;
   updated_at: string;
 }
